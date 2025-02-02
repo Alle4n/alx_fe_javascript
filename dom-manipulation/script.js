@@ -12,17 +12,19 @@ let quotes = JSON.parse(localStorage.getItem('quotes')) || [
     localStorage.setItem('quotes', JSON.stringify(quotes));
   }
   
-  // Fetch quotes from server (simulated)
-  function fetchQuotesFromServer() { // Renamed function to fetchQuotesFromServer
-    return fetch(API_URL)
-      .then(response => response.json())
-      .then(data => {
-        serverQuotes = data.map(post => ({
-          text: post.title, // Using 'title' as quote text
-          category: 'General' // Static category for simplicity
-        }));
-        syncQuotes();
-      });
+  // Fetch quotes from server (simulated using async/await)
+  async function fetchQuotesFromServer() { // Marked as async
+    try {
+      const response = await fetch(API_URL); // Using await to fetch the data
+      const data = await response.json(); // Parsing the JSON response with await
+      serverQuotes = data.map(post => ({
+        text: post.title, // Using 'title' as quote text
+        category: 'General' // Static category for simplicity
+      }));
+      syncQuotes(); // Sync local and server quotes
+    } catch (error) {
+      console.error("Error fetching quotes from server:", error); // Handle any error that occurs during the fetch
+    }
   }
   
   // Sync local data with server data
@@ -38,7 +40,7 @@ let quotes = JSON.parse(localStorage.getItem('quotes')) || [
   
   // Periodically check for updates from the server
   setInterval(() => {
-    fetchQuotesFromServer(); // Renamed to fetchQuotesFromServer
+    fetchQuotesFromServer(); // Call the async function
   }, 5000); // Every 5 seconds, check for updates
   
   // Show notification about conflict resolution
