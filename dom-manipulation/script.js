@@ -13,7 +13,7 @@ let quotes = JSON.parse(localStorage.getItem('quotes')) || [
   }
   
   // Fetch quotes from server (simulated)
-  function fetchServerQuotes() {
+  function fetchQuotesFromServer() { // Renamed function to fetchQuotesFromServer
     return fetch(API_URL)
       .then(response => response.json())
       .then(data => {
@@ -38,7 +38,7 @@ let quotes = JSON.parse(localStorage.getItem('quotes')) || [
   
   // Periodically check for updates from the server
   setInterval(() => {
-    fetchServerQuotes();
+    fetchQuotesFromServer(); // Renamed to fetchQuotesFromServer
   }, 5000); // Every 5 seconds, check for updates
   
   // Show notification about conflict resolution
@@ -143,5 +143,5 @@ let quotes = JSON.parse(localStorage.getItem('quotes')) || [
   // Initialize app
   populateCategories();
   showRandomQuote();
-  fetchServerQuotes();  // Fetch server data initially
+  fetchQuotesFromServer();  // Fetch server data initially
   
