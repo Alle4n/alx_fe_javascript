@@ -25,6 +25,29 @@ let quotes = [
     }
   }
   
+  function createAddQuoteForm() {
+    const formContainer = document.getElementById('addQuoteFormContainer');
+    
+    const inputText = document.createElement('input');
+    inputText.id = 'newQuoteText';
+    inputText.type = 'text';
+    inputText.placeholder = 'Enter a new quote';
+  
+    const inputCategory = document.createElement('input');
+    inputCategory.id = 'newQuoteCategory';
+    inputCategory.type = 'text';
+    inputCategory.placeholder = 'Enter quote category';
+  
+    const addButton = document.createElement('button');
+    addButton.textContent = 'Add Quote';
+    addButton.onclick = addQuote;
+  
+    formContainer.appendChild(inputText);
+    formContainer.appendChild(inputCategory);
+    formContainer.appendChild(addButton);
+  }
+  
   document.getElementById('newQuote').addEventListener('click', showRandomQuote);
+  createAddQuoteForm();
   showRandomQuote();
   
