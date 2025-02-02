@@ -35,7 +35,20 @@ let quotes = JSON.parse(localStorage.getItem('quotes')) || [
   
     if (changesMade) {
       showConflictResolutionNotification();
+    } else {
+      showSyncSuccessNotification(); // Show success message when no conflicts
     }
+  }
+  
+  // Show notification about successful sync
+  function showSyncSuccessNotification() {
+    const notification = document.getElementById('notification');
+    notification.innerHTML = 'Quotes synced with server!';
+    notification.style.display = 'block';
+  
+    setTimeout(() => {
+      notification.style.display = 'none';
+    }, 3000); // Hide notification after 3 seconds
   }
   
   // Periodically check for updates from the server
@@ -138,6 +151,7 @@ let quotes = JSON.parse(localStorage.getItem('quotes')) || [
       if (response.ok) {
         const data = await response.json();
         console.log('New quote posted to server:', data);
+        showSyncSuccessNotification(); // Display success message after POST
       } else {
         console.error('Failed to post new quote to server');
       }
