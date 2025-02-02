@@ -12,18 +12,18 @@ let quotes = JSON.parse(localStorage.getItem('quotes')) || [
     localStorage.setItem('quotes', JSON.stringify(quotes));
   }
   
-  // Fetch quotes from server (simulated using async/await)
-  async function fetchQuotesFromServer() { // Marked as async
+  // Fetch quotes from the server (simulated using async/await)
+  async function fetchQuotesFromServer() {
     try {
-      const response = await fetch(API_URL); // Using await to fetch the data
-      const data = await response.json(); // Parsing the JSON response with await
+      const response = await fetch(API_URL);
+      const data = await response.json();
       serverQuotes = data.map(post => ({
         text: post.title, // Using 'title' as quote text
         category: 'General' // Static category for simplicity
       }));
-      syncQuotes(); // Sync local and server quotes
+      syncQuotes();
     } catch (error) {
-      console.error("Error fetching quotes from server:", error); // Handle any error that occurs during the fetch
+      console.error("Error fetching quotes from server:", error);
     }
   }
   
@@ -40,7 +40,7 @@ let quotes = JSON.parse(localStorage.getItem('quotes')) || [
   
   // Periodically check for updates from the server
   setInterval(() => {
-    fetchQuotesFromServer(); // Call the async function
+    fetchQuotesFromServer(); // Call the async function to fetch data from server
   }, 5000); // Every 5 seconds, check for updates
   
   // Show notification about conflict resolution
@@ -49,18 +49,17 @@ let quotes = JSON.parse(localStorage.getItem('quotes')) || [
     notification.innerHTML = 'Data conflict detected. Server data takes precedence.';
     notification.style.display = 'block';
   
-    // Simulate auto conflict resolution (server data takes precedence)
     setTimeout(() => {
       resolveConflict();
       notification.style.display = 'none';
-    }, 3000); // Conflict resolution after 3 seconds
+    }, 3000); // Resolve conflict after 3 seconds
   }
   
   // Resolve the conflict (server data takes precedence)
   function resolveConflict() {
     quotes = [...serverQuotes]; // Sync local data with server data
     saveQuotes();
-    filterQuotes(); // Update displayed quotes after resolution
+    filterQuotes();
   }
   
   // Populate categories dynamically
@@ -106,7 +105,7 @@ let quotes = JSON.parse(localStorage.getItem('quotes')) || [
   }
   
   // Add new quote
-  function addQuote() {
+  async function addQuote() {
     const newQuoteText = document.getElementById('newQuoteText').value;
     const newQuoteCategory = document.getElementById('newQuoteCategory').value;
     if (newQuoteText && newQuoteCategory) {
@@ -114,8 +113,36 @@ let quotes = JSON.parse(localStorage.getItem('quotes')) || [
       quotes.push(newQuote);
       saveQuotes();
       filterQuotes();  // Refresh the quotes after adding a new one
+  
+      // Send the new quote to the server using POST
+      await postQuoteToServer(newQuote); // Post the new quote to the server
     } else {
       alert('Please enter both quote and category!');
+    }
+  }
+  
+  // Function to send new quote to server using POST
+  async function postQuoteToServer(quote) {
+    try {
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json', // Indicate JSON data
+        },
+        body: JSON.stringify({
+          title: quote.text, // Using 'title' as the text field for the API
+          body: quote.category, // Use category as 'body' for simplicity
+        })
+      });
+  
+      if (response.ok) {
+        const data = await response.json();
+        console.log('New quote posted to server:', data);
+      } else {
+        console.error('Failed to post new quote to server');
+      }
+    } catch (error) {
+      console.error("Error posting quote to server:", error);
     }
   }
   
